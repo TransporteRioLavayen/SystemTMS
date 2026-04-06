@@ -729,6 +729,38 @@ Archivos listos para deploy:
 
 ---
 
+## 14. Skills de Auditoría (Documentación técnica)
+
+Los siguientes archivos contienen auditorías técnicas detalladas del proyecto:
+
+### 14.1 Skills Implementados
+
+| Archivo | Área | Descripción |
+|---------|------|-------------|
+| `.skill/AUDIT_BACKEND.md` | Backend | Stack, arquitectura, API, autenticación |
+| `.skill/AUDIT_FRONTEND.md` | Frontend | React, componentes, state management |
+| `.skill/AUDIT_DATABASE.md` | Database | Schema, índices, RLS, transacciones |
+| `.skill/AUDIT_SECURITY.md` | Security | Autenticación, autorización, OWASP |
+| `.skill/AUDIT_UI_UX.md` | UI/UX | Diseño, componentes, accesibilidad |
+| `.skill/AUDIT_UX_WRITER.md` | UX Writer | Labels, mensajes, consistencia |
+| `.skill/AUDIT_DATA_ANALYTICS.md` | Analytics | KPIs, dashboards, reportes |
+| `.skill/AUDIT_PRODUCT.md` | Producto | Funcionalidad, flujos, features |
+| `.skill/AUDIT_ARCHITECTURE.md` | Arquitectura | Clean Architecture, patrones |
+| `.skill/AUDIT_DEVOPS.md` | DevOps | Infra, CI/CD, deployment |
+| `.skill/CI_CD_DEPLOY.md` | CI/CD | Pipeline completo |
+
+### 14.2 Uso de los Skills
+
+Cada skill contiene:
+- Estado actual del área
+- Stack tecnológico usado
+- Puntos técnicos auditados
+- Checklist de cumplimiento
+- Roadmap de mejoras
+- Referencias a código
+
+---
+
 *Documento actualizado el 2026-04-06*  
 *Proyecto: TransporteRioLavayen — TMS*  
-*Estado: 🟢 PRODUCCIÓN | CI/CD Configurado*
+*Estado: 🟢 PRODUCCIÓN | CI/CD Configurado | Skills de Auditoría Completos*
