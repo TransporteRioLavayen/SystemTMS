@@ -688,6 +688,47 @@ Archivos listos para deploy:
 
 ---
 
+## 13. CI/CD - Despliegue Automático
+
+### Estructura de Ramas
+
+| Rama | Entorno | Descripción |
+|------|---------|-------------|
+| `desarrollo` | Staging | Desarrollo activo - deploy automático |
+| `main` | Production | Rama principal - deploy automático |
+| `produccion` | Production | Release estable - producción |
+
+### Servicios de Deploy
+
+| Componente | Servicio | Estado |
+|------------|----------|--------|
+| **Backend** | Railway | ✅ Configurado |
+| **Frontend** | Cloudflare Pages | ✅ Configurado |
+| **CI/CD** | GitHub Actions | ✅ Listo |
+
+### Workflows Creados
+
+| Workflow | Archivo | Destino |
+|----------|---------|---------|
+| Backend CI/CD | `.github/workflows/backend-railway.yml` | Railway |
+| Frontend CI/CD | `.github/workflows/frontend-cloudflare.yml` | Cloudflare Pages |
+
+### Secrets y Variables Requeridas
+
+#### Railway (Backend)
+- `RAILWAY_TOKEN` - Token de API de Railway
+- `RAILWAY_PROJECT_ID` - ID del proyecto
+
+#### Cloudflare (Frontend)
+- `CLOUDFLARE_API_TOKEN` - Token de API
+- `CLOUDFLARE_ACCOUNT_ID` - Account ID
+- Variables: `VITE_API_URL`, `VITE_CLERK_PUBLISHABLE_KEY`
+
+### Documentación
+- Archivo: `.github/CI-CD.md`
+
+---
+
 *Documento actualizado el 2026-04-06*  
 *Proyecto: TransporteRioLavayen — TMS*  
-*Estado: 🟢 COMPLETADO | Listo para Cloudflare*
+*Estado: 🟢 PRODUCCIÓN | CI/CD Configurado*

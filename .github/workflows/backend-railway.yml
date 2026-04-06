@@ -1,0 +1,74 @@
+# CI/CD - Backend (Railway)
+name: Deploy Backend to Railway
+
+on:
+  push:
+    branches:
+      - main
+      - produccion
+      - desarrollo
+    paths:
+      - 'backend/**'
+      - 'package.json'
+      - 'railway.json'
+
+# Jobs parallelos para desarrollo (sin aprobación) y producción (con aprobación)
+jobs:
+  # Deploy automático a staging (desarrollo) - SIN APROBACIÓN
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/desarrollo'
+    environment: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Railway Login
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy to Railway Staging
+        run: railway deploy
+        working-directory: ./backend
+        env:
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+
+  # Deploy a producción (main/produccion) - REQUIERE APROBACIÓN
+  deploy-production:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/produccion'
+    environment: production
+    needs: []
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Railway Login
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy to Railway Production
+        run: railway deploy
+        working-directory: ./backend
+        env:
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
