@@ -192,11 +192,13 @@ function startDevServer() {
 }
 
 // =============================================================================
-// CLOUDFLARE WORKERS HANDLER
+// CLOUDFLARE WORKERS HANDLER (nodejs_compat)
 // =============================================================================
 
-// Para Cloudflare Workers, exportamos un handler de fetch
-// Esto permite que Wrangler来来来来处理 las requests
+// Con nodejs_compat, Cloudflare Workers puede ejecutar Express directamente
+// usando el módulo node:http
+
+import { createServer } from 'node:http';
 
 export default {
   async fetch(request: Request, env: any, ctx: any): Promise<Response> {
@@ -209,69 +211,65 @@ export default {
       });
     }
 
-    // Get URL and method
+    // Convertir Request de Cloudflare a Request de Node.js
     const url = new URL(request.url);
-    const method = request.method;
-
-    // Create mock req/res for Express compatibility
-    const mockReq = Object.assign(request, {
+    
+    const nodeReq = {
+      method: request.method,
+      url: request.url,
       path: url.pathname,
-      method: method,
-      query: Object.fromEntries(url.searchParams),
-      body: method !== 'GET' && method !== 'HEAD' ? request.json() : null,
-      headers: request.headers,
+      query: url.searchParams.toString(),
+      headers: Object.fromEntries(request.headers),
+      body: request.body,
+    } as any;
+
+    // Crear respuesta mock
+    let responseStatus = 200;
+    const responseHeaders: Record<string, string> = {};
+    let responseBody = '';
+
+    const nodeRes = {
+      statusCode: 200,
+      setHeader(name: string, value: string) {
+        responseHeaders[name] = value;
+        return this;
+      },
+      getHeader(name: string) {
+        return responseHeaders[name];
+      },
+      status(code: number) {
+        responseStatus = code;
+        return this;
+      },
+      send(data: any) {
+        responseBody = typeof data === 'string' ? data : JSON.stringify(data);
+        return this;
+      },
+      json(data: any) {
+        responseBody = JSON.stringify(data);
+        responseHeaders['Content-Type'] = 'application/json';
+        return this;
+      },
+      end(data?: any) {
+        if (data) {
+          responseBody = typeof data === 'string' ? data : JSON.stringify(data);
+        }
+      },
+    } as any;
+
+    // Ejecutar Express
+    await new Promise<void>((resolve) => {
+      app(nodeReq, nodeRes, () => {
+        // Next function (no-op)
+        resolve();
+      });
     });
 
-    // Use express as a request handler
-    const response = await new Promise<Response>((resolve) => {
-      const mockRes = {
-        statusCode: 200,
-        headers: {} as Record<string, string>,
-        body: '',
-        status(code: number) {
-          this.statusCode = code;
-          return this;
-        },
-        json(data: any) {
-          this.body = JSON.stringify(data);
-          resolve(new Response(this.body, {
-            status: this.statusCode,
-            headers: {
-              'Content-Type': 'application/json',
-              ...this.headers,
-            },
-          }));
-        },
-        send(data: any) {
-          this.body = typeof data === 'string' ? data : JSON.stringify(data);
-          resolve(new Response(this.body, {
-            status: this.statusCode,
-            headers: {
-              'Content-Type': 'application/json',
-              ...this.headers,
-            },
-          }));
-        },
-        setHeader(name: string, value: string) {
-          this.headers[name] = value;
-          return this;
-        },
-        end(data?: any) {
-          if (data) {
-            this.body = typeof data === 'string' ? data : JSON.stringify(data);
-          }
-          resolve(new Response(this.body, {
-            status: this.statusCode,
-            headers: this.headers,
-          }));
-        },
-      };
-
-      // @ts-ignore - Express handler
-      app(mockReq, mockRes, () => {});
+    // Devolver Response de Cloudflare
+    return new Response(responseBody, {
+      status: responseStatus,
+      headers: responseHeaders,
     });
-
-    return response;
   },
 };
 

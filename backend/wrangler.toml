@@ -1,30 +1,9 @@
-name = "transporte-rio-lavayen-backend"
+name = "systemtms"
 main = "src/index.ts"
 compatibility_date = "2025-04-01"
 
-# Habilitar compatibilidad con Node.js
-# IMPORTANTE: Desde Sept 2025, Workers soporta node:http natively
-[env.production]
-vars = { NODE_ENV = "production" }
-
-[build]
-command = "npm install && npm run build"
-watch_dir = "src"
-
-# Configuración de Node.js compatibility
-# Esto permite usar express, node:http, y otros módulos de Node
+# Habilitar compatibilidad con Node.js - NECESARIO para Express
 compatibility_flags = ["nodejs_compat"]
 
-# Variables de entorno que se configuran en el dashboard de Cloudflare
-# NO incluir valores sensibles aquí - se configuran con wrangler secret put
-
-# Configuración de KV (si se necesita cache)
-# [[kv_namespaces]]
-# binding = "CACHE"
-# id = "tu-kv-namespace-id"
-
-# Configuración de D1 (base de datos SQLite en edge)
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "transporte-rio-lavayen"
-# database_id = "tu-d1-database-id"
+[env.production]
+name = "production"
