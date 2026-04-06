@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response as ExpressResponse, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -29,10 +29,8 @@ import { startSupabaseRealtime } from './infrastructure/realtime/supabase-realti
 import { logger } from './infrastructure/logging/logger';
 
 // =============================================================================
-// DETECCIÓN DE ENTORNO: Cloudflare Workers vs Desarrollo Local
+// CONFIGURACIÓN
 // =============================================================================
-
-const isCloudflare = process.env.CF_PAGES || process.env.WORKER_ENV || process.env.__WRANGLER__;
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
@@ -41,8 +39,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 // MIDDLEWARES
 // =============================================================================
 
-// CORS - permitir todos los orígenes en desarrollo
-// En producción, reemplazar con el dominio de Cloudflare Pages
+// CORS
 app.use(cors({
   origin: '*',
   credentials: true,
@@ -50,18 +47,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
 }));
 
-// Preflight requests
 app.options('*', cors());
 
-// Seguridad - Headers HTTP
 app.use(helmet({
-  contentSecurityPolicy: false, // Desactivado para desarrollo; habilitar en producción
+  contentSecurityPolicy: false,
 }));
 
-// Rate Limiting - Protección contra abuso
-// Límite general: 200 requests por ventana de 15 minutos
+// Rate Limiting
 const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
+  windowMs: 15 * 60 * 1000,
   max: 200,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
@@ -69,12 +63,11 @@ const generalLimiter = rateLimit({
     error: 'Too Many Requests',
     message: 'Demasiadas solicitudes. Intenta de nuevo más tarde.',
   },
-  skip: (req) => req.path.startsWith('/api/events'), // No limitar SSE
+  skip: (req) => req.path.startsWith('/api/events'),
 });
 
-// Límite estricto para endpoints de autenticación
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
+  windowMs: 15 * 60 * 1000,
   max: 20,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
@@ -84,22 +77,20 @@ const authLimiter = rateLimit({
   },
 });
 
-// Body parsing - con límite de tamaño
+// Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Clerk Middleware
 app.use(clerkMiddleware());
 
-// Aplicar rate limiting
 app.use('/api/', generalLimiter);
 
 // =============================================================================
 // RUTAS
 // =============================================================================
 
-// Health check (público, sin rate limiting estricto)
-app.get('/api/health', (req: Request, res: Response) => {
+app.get('/api/health', (req: Request, res: ExpressResponse) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -109,7 +100,7 @@ app.get('/api/health', (req: Request, res: Response) => {
   });
 });
 
-// Swagger UI - Documentación de la API (público)
+// Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(getSwaggerSpec(), {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'TransporteRioLavayen API Docs',
@@ -136,16 +127,14 @@ app.use('/api', realtimeRoutes);
 // ERROR HANDLERS
 // =============================================================================
 
-// 404 - Not Found
-app.use((req: Request, res: Response) => {
+app.use((req: Request, res: ExpressResponse) => {
   res.status(404).json({
     error: 'Not Found',
     message: `Ruta ${req.method} ${req.path} no encontrada`,
   });
 });
 
-// 500 - Internal Server Error
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: ExpressResponse, next: NextFunction) => {
   logger.error('Error: %s', err.message);
   logger.error(err.stack);
   
@@ -156,126 +145,26 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // =============================================================================
-// INICIAR SERVIDOR (Solo en desarrollo local)
+// INICIAR SERVIDOR
 // =============================================================================
 
-// Función para iniciar el servidor de desarrollo
-function startDevServer() {
-  const server = app.listen(PORT, () => {
-    logger.info(`
+const server = app.listen(PORT, () => {
+  logger.info(`
   ╔══════════════════════════════════════════════════════════════╗
-  ║                                                              ║
   ║   TRANSPORTE RIO LAVAYEN - BACKEND                        ║
-  ║   ═══════════════════════════════════════════════════════════ ║
-  ║                                                              ║
   ║   Servidor corriendo en: http://localhost:${PORT}               ║
   ║   Environment: ${process.env.NODE_ENV || 'development'}                                 ║
-  ║   Health: http://localhost:${PORT}/api/health                   ║
-  ║   Swagger UI: http://localhost:${PORT}/api-docs                 ║
-  ║   Auth: Clerk (@clerk/express)                                ║
-  ║                                                              ║
   ╚══════════════════════════════════════════════════════════════╝
-    `);
+  `);
 
-    // Realtime se inicia DESPUÉS de que el servidor está escuchando
-    setImmediate(() => {
-      try {
-        const supabase = startSupabaseRealtime();
-        logger.info('[Supabase] Cliente pre-inicializado');
-      } catch (err: any) {
-        logger.warn('[Realtime] No se pudo iniciar Supabase o Realtime: %s', err.message);
-      }
-    });
-  });
-
-  return server;
-}
-
-// =============================================================================
-// CLOUDFLARE WORKERS HANDLER (nodejs_compat)
-// =============================================================================
-
-// Con nodejs_compat, Cloudflare Workers puede ejecutar Express directamente
-// usando el módulo node:http
-
-import { createServer } from 'node:http';
-
-export default {
-  async fetch(request: Request, env: any, ctx: any): Promise<Response> {
-    // Setear variables de entorno desde Cloudflare
-    if (env) {
-      Object.keys(env).forEach(key => {
-        if (!process.env[key]) {
-          process.env[key] = env[key];
-        }
-      });
+  setImmediate(() => {
+    try {
+      const supabase = startSupabaseRealtime();
+      logger.info('[Supabase] Cliente pre-inicializado');
+    } catch (err: any) {
+      logger.warn('[Realtime] No se pudo iniciar Supabase o Realtime: %s', err.message);
     }
+  });
+});
 
-    // Convertir Request de Cloudflare a Request de Node.js
-    const url = new URL(request.url);
-    
-    const nodeReq = {
-      method: request.method,
-      url: request.url,
-      path: url.pathname,
-      query: url.searchParams.toString(),
-      headers: Object.fromEntries(request.headers),
-      body: request.body,
-    } as any;
-
-    // Crear respuesta mock
-    let responseStatus = 200;
-    const responseHeaders: Record<string, string> = {};
-    let responseBody = '';
-
-    const nodeRes = {
-      statusCode: 200,
-      setHeader(name: string, value: string) {
-        responseHeaders[name] = value;
-        return this;
-      },
-      getHeader(name: string) {
-        return responseHeaders[name];
-      },
-      status(code: number) {
-        responseStatus = code;
-        return this;
-      },
-      send(data: any) {
-        responseBody = typeof data === 'string' ? data : JSON.stringify(data);
-        return this;
-      },
-      json(data: any) {
-        responseBody = JSON.stringify(data);
-        responseHeaders['Content-Type'] = 'application/json';
-        return this;
-      },
-      end(data?: any) {
-        if (data) {
-          responseBody = typeof data === 'string' ? data : JSON.stringify(data);
-        }
-      },
-    } as any;
-
-    // Ejecutar Express
-    await new Promise<void>((resolve) => {
-      app(nodeReq, nodeRes, () => {
-        // Next function (no-op)
-        resolve();
-      });
-    });
-
-    // Devolver Response de Cloudflare
-    return new Response(responseBody, {
-      status: responseStatus,
-      headers: responseHeaders,
-    });
-  },
-};
-
-// Iniciar servidor solo si NO estamos en Cloudflare
-if (!isCloudflare) {
-  startDevServer();
-}
-
-export { app };
+export default app;
