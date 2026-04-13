@@ -81,7 +81,6 @@ export default function GestionPlanillas() {
 
   const handleGuardarBorador = (data: PlanillaFormData) => {
     const pData: Planilla = {
-      id: editingId || `PLN-${Math.floor(Math.random() * 10000)}`,
       sucursalOrigen: data.sucursalOrigen,
       sucursalDestino: data.sucursalDestino || undefined,
       fechaSalidaEstimada: data.fechaSalidaEstimada || undefined,
@@ -93,10 +92,15 @@ export default function GestionPlanillas() {
       remitos: (data.remitos || []) as Remito[],
     };
 
-    if (editingId) {
-      actualizarPlanilla(editingId, pData);
-    } else {
+    // Verificar si editingId es un UUID real (del backend) o un ID temporal (del frontend)
+    const isNewPlanilla = !editingId || editingId.startsWith('PLN-');
+    
+    if (isNewPlanilla) {
+      // Crear nueva planilla en la base de datos
       guardarBorrador(pData);
+    } else {
+      // Actualizar planilla existente (editingId es un UUID real)
+      actualizarPlanilla(editingId, pData);
     }
     
     setIsCreating(false);
@@ -151,7 +155,9 @@ export default function GestionPlanillas() {
   };
 
   const openNuevaPlanilla = () => {
-    setEditingId(null);
+    // Generar ID temporal inmediatamente al crear nueva planilla
+    const nuevoId = `PLN-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    setEditingId(nuevoId);
     resetPlanilla({
       sucursalOrigen: '', sucursalDestino: '', fechaSalidaEstimada: '', fechaLlegadaEstimada: '', camion: '', chofer: '', comentarios: '', estado: 'borrador', remitos: []
     });

@@ -202,42 +202,57 @@ export class SupabasePlanillaRepository implements IPlanillaRepository {
   async create(planilla: Omit<Planilla, 'id' | 'createdAt' | 'updatedAt'>): Promise<Planilla> {
     const supabase = getSupabaseClient();
     
-    // Formatear remitos para el RPC
-    const remitosPayload = (planilla.remitos || []).map(r => ({
-      remitente: r.remitente,
-      numero_remito: r.numeroRemito,
-      destinatario: r.destinatario,
-      direccion: r.direccion || null,
-      whatsapp: r.whatsapp || null,
-      bultos: r.bultos || 1,
-      valor_declarado: r.valorDeclarado || 0,
-      seguimiento: r.seguimiento || null,
-      estado: 'Ingresado'
-    }));
+    // Crear la planilla directamente en la tabla
+    const { data: planillaData, error: planillaError } = await supabase
+      .from('planillas')
+      .insert({
+        sucursal_origen: planilla.sucursalOrigen,
+        sucursal_destino: planilla.sucursalDestino || null,
+        fecha_salida_estimada: planilla.fechaSalidaEstimada || null,
+        fecha_llegada_estimada: planilla.fechaLlegadaEstimada || null,
+        camion: planilla.camion || null,
+        chofer: planilla.chofer || null,
+        estado: planilla.estado || 'borrador',
+        comentarios: planilla.comentarios || null,
+        km_salida: planilla.kmSalida || null,
+      })
+      .select()
+      .single();
 
-    // Ejecutar RPC para creación atómica
-    const { data: planillaId, error } = await supabase.rpc('create_planilla_with_remitos', {
-      p_sucursal_origen: planilla.sucursalOrigen,
-      p_sucursal_destino: planilla.sucursalDestino || null,
-      p_fecha_salida: planilla.fechaSalidaEstimada || null,
-      p_fecha_llegada: planilla.fechaLlegadaEstimada || null,
-      p_camion: planilla.camion || null,
-      p_chofer: planilla.chofer || null,
-      p_estado: planilla.estado || 'borrador',
-      p_comentarios: planilla.comentarios || null,
-      p_km_salida: planilla.kmSalida || null,
-      p_remitos: remitosPayload
-    });
-
-    if (error) {
-      logger.error('Error in create_planilla_with_remitos RPC: %o', error);
-      throw new Error(`Error creating planilla: ${error.message}`);
+    if (planillaError) {
+      logger.error('Error creating planilla: %o', planillaError);
+      throw new Error(`Error creating planilla: ${planillaError.message}`);
     }
 
-    // Obtener la planilla completa creada (incluyendo remitos mapeados)
-    const result = await this.findById(planillaId);
+    // Si hay remitos, insertarlos
+    if (planilla.remitos && planilla.remitos.length > 0) {
+      const remitosData = planilla.remitos.map(r => ({
+        planilla_id: planillaData.id,
+        remitente: r.remitente,
+        numero_remito: r.numeroRemito,
+        destinatario: r.destinatario,
+        direccion: r.direccion || null,
+        whatsapp: r.whatsapp || null,
+        bultos: r.bultos || 1,
+        valor_declarado: r.valorDeclarado || 0,
+        seguimiento: r.seguimiento || null,
+        estado: 'Ingresado'
+      }));
+
+      const { error: remitosError } = await supabase
+        .from('remitos')
+        .insert(remitosData);
+
+      if (remitosError) {
+        logger.error('Error creating remitos: %o', remitosError);
+        throw new Error(`Error creating remitos: ${remitosError.message}`);
+      }
+    }
+
+    // Obtener la planilla completa creada
+    const result = await this.findById(planillaData.id);
     if (!result) {
-      throw new Error('Planilla no encontrada después de la creación atómica');
+      throw new Error('Planilla no encontrada después de la creación');
     }
     
     return result;

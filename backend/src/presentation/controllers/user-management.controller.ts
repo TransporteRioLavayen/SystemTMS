@@ -5,11 +5,10 @@
 // =============================================================================
 
 import { Request, Response } from 'express';
-import { clerkClient } from '@clerk/express';
 import { getSupabaseClient } from '../../infrastructure/database/supabase/client';
 import { logger } from '../../infrastructure/logging/logger';
 import * as userManagementUseCase from '../../application/use-cases/user-management.use-case';
-import { extractUserId } from '../routes/auth.routes';
+import { getClerkUserId } from '../../infrastructure/middleware/clerk-auth';
 
 class UserManagementController {
   /**
@@ -33,11 +32,12 @@ class UserManagementController {
 
   /**
    * POST /users - Crear un nuevo usuario desde la UI de Admin
+   * NO usa Clerk - solo crea el usuario en la tabla users_system con password generado
    */
   async createUser(req: Request, res: Response): Promise<void> {
     try {
-      // Obtener el ID del usuario actual desde el token
-      const clerkUserId = await extractUserId(req);
+      // Obtener el ID de Clerk del usuario actual desde el token
+      const clerkUserId = getClerkUserId(req);
       if (!clerkUserId) {
         res.status(401).json({ error: 'Unauthorized', message: 'No autenticado' });
         return;
@@ -52,20 +52,16 @@ class UserManagementController {
         return;
       }
 
-      // Obtener el ID del admin desde la tabla users_system buscando por email
+      // Buscar el usuario actual en users_system por clerk_id
       const supabase = getSupabaseClient();
-      const user = await clerkClient.users.getUser(clerkUserId);
-      const userEmail = user.primaryEmailAddress?.emailAddress;
-
-      // Buscar el usuario en la tabla users_system por email (el que se sincronizó con sync-user)
       const { data: parentUser, error: parentError } = await supabase
         .from('users_system')
         .select('id')
-        .eq('email', userEmail)
+        .eq('clerk_id', clerkUserId)
         .single();
 
       if (parentError || !parentUser) {
-        logger.error('[UserManagement] No se encontró el usuario padre: %s', userEmail);
+        logger.error('[UserManagement] No se encontró el usuario admin: clerk_id=%s', clerkUserId);
         res.status(500).json({ 
           error: 'Internal Server Error', 
           message: 'Error al identificar usuario administrador' 
@@ -73,6 +69,7 @@ class UserManagementController {
         return;
       }
 
+      // Crear el nuevo usuario (el use case genera la password automáticamente)
       const newUser = await userManagementUseCase.createUser(parentUser.id, { email, name, role });
       res.status(201).json({
         success: true,
