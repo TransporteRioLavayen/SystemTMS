@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para crear un chofer
 
-import { Chofer } from '../../../domain/entities/chofer.entity';
-import { IChoferRepository } from '../../../domain/repositories/chofer.repository.interface';
+import { Chofer } from '@domain/entities/chofer.entity';
+import { IChoferRepository } from '@domain/repositories/chofer.repository.interface';
 import { CreateChoferDTO } from '../dto/create-chofer.dto';
 
 export class ValidationError extends Error {
@@ -24,6 +24,6 @@ export class CreateChoferUseCase {
       throw new ValidationError('Ya existe un chofer con este DNI');
     }
 
-    return this.repository.create(data);
+    return this.repository.create(data as any);
   }
 }

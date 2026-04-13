@@ -3,8 +3,8 @@
 // =============================================================================
 
 import { CreatePlanillaDto } from '../dto/create-planilla.dto';
-import { Planilla } from '../../../domain/entities/planilla.entity';
-import { IPlanillaRepository } from '../../../domain/repositories/planilla.repository.interface';
+import { Planilla } from '@domain/entities/planilla.entity';
+import { IPlanillaRepository } from '@domain/repositories/planilla.repository.interface';
 
 export class CreatePlanillaUseCase {
   constructor(private repository: IPlanillaRepository) {}

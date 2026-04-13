@@ -3,7 +3,7 @@
 // =============================================================================
 // Application Layer - Caso de uso para listar consultas con paginación
 
-import { IConsultaRepository } from '../../../domain/repositories/consulta.repository.interface';
+import { IConsultaRepository } from '@domain/repositories/consulta.repository.interface';
 import { logger } from '../../infrastructure/logging/logger';
 
 export class ListConsultasUseCase {

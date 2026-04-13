@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para crear un nuevo depósito
 
-import { IDepositoRepository } from '../../../domain/repositories/deposito.repository.interface';
-import { CreateDepositoInput } from '../../../domain/entities/deposito.entity';
+import { IDepositoRepository } from '@domain/repositories/deposito.repository.interface';
+import { CreateDepositoInput } from '@domain/entities/deposito.entity';
 import { CreateDepositoDTO } from '../dto/create-deposito.dto';
 import { toDepositoResponseDTO, DepositoResponseDTO } from '../dto/deposito-response.dto';
 
@@ -26,7 +26,7 @@ export class CreateDepositoUseCase {
     }
 
     // Crear el depósito a través del repository
-    const nuevoDeposito = await this.repository.create(data);
+    const nuevoDeposito = await this.repository.create(data as any);
     
     return toDepositoResponseDTO(nuevoDeposito);
   }

@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para crear una unidad
 
-import { Unidad } from '../../../domain/entities/unidad.entity';
-import { IUnidadRepository } from '../../../domain/repositories/unidad.repository.interface';
+import { Unidad } from '@domain/entities/unidad.entity';
+import { IUnidadRepository } from '@domain/repositories/unidad.repository.interface';
 import { CreateUnidadDTO } from '../dto/create-unidad.dto';
 
 export class ValidationError extends Error {
@@ -24,6 +24,6 @@ export class CreateUnidadUseCase {
       throw new ValidationError('Ya existe una unidad con esta patente');
     }
 
-    return this.repository.create(data);
+    return this.repository.create(data as any);
   }
 }

@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para actualizar un tercero
 
-import { Tercero } from '../../../domain/entities/tercero.entity';
-import { ITerceroRepository } from '../../../domain/repositories/tercero.repository.interface';
+import { Tercero } from '@domain/entities/tercero.entity';
+import { ITerceroRepository } from '@domain/repositories/tercero.repository.interface';
 import { UpdateTerceroDTO } from '../dto/update-tercero.dto';
 import { ValidationError } from './create-tercero.use-case';
 

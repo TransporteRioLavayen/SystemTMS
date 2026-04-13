@@ -3,8 +3,8 @@
 // =============================================================================
 
 import { UpdatePlanillaDto } from '../dto/update-planilla.dto';
-import { Planilla } from '../../../domain/entities/planilla.entity';
-import { IPlanillaRepository } from '../../../domain/repositories/planilla.repository.interface';
+import { Planilla } from '@domain/entities/planilla.entity';
+import { IPlanillaRepository } from '@domain/repositories/planilla.repository.interface';
 
 export class UpdatePlanillaUseCase {
   constructor(private repository: IPlanillaRepository) {}

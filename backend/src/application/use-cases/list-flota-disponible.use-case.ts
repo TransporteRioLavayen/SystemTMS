@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Lista unidades propias y terceros disponibles
 
-import { IUnidadRepository } from '../../../domain/repositories/unidad.repository.interface';
-import { ITerceroRepository } from '../../../domain/repositories/tercero.repository.interface';
+import { IUnidadRepository } from '@domain/repositories/unidad.repository.interface';
+import { ITerceroRepository } from '@domain/repositories/tercero.repository.interface';
 
 export interface UnidadDisponible {
   id: string;

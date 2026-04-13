@@ -3,7 +3,7 @@
 // =============================================================================
 // Application Layer - Caso de uso para eliminar (soft delete) un depósito
 
-import { IDepositoRepository } from '../../../domain/repositories/deposito.repository.interface';
+import { IDepositoRepository } from '@domain/repositories/deposito.repository.interface';
 import { NotFoundError } from './get-deposito-by-id.use-case';
 
 export class DeleteDepositoUseCase {

@@ -3,7 +3,7 @@
 // =============================================================================
 // Application Layer - Caso de uso para eliminar un tercero (soft delete)
 
-import { ITerceroRepository } from '../../../domain/repositories/tercero.repository.interface';
+import { ITerceroRepository } from '@domain/repositories/tercero.repository.interface';
 
 export class DeleteTerceroUseCase {
   constructor(private repository: ITerceroRepository) {}

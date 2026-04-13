@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para obtener un chofer por su ID
 
-import { Chofer } from '../../../domain/entities/chofer.entity';
-import { IChoferRepository } from '../../../domain/repositories/chofer.repository.interface';
+import { Chofer } from '@domain/entities/chofer.entity';
+import { IChoferRepository } from '@domain/repositories/chofer.repository.interface';
 
 export class GetChoferByIdUseCase {
   constructor(private repository: IChoferRepository) {}

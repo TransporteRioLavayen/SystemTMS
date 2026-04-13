@@ -2,7 +2,7 @@
 // DELETE PLANILLA USE CASE - BACKEND
 // =============================================================================
 
-import { IPlanillaRepository } from '../../../domain/repositories/planilla.repository.interface';
+import { IPlanillaRepository } from '@domain/repositories/planilla.repository.interface';
 
 export class DeletePlanillaUseCase {
   constructor(private repository: IPlanillaRepository) {}

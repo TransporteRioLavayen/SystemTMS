@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para crear una consulta
 
-import { IConsultaRepository } from '../../../domain/repositories/consulta.repository.interface';
-import { CreateConsultaInput } from '../../../domain/entities/consulta.entity';
+import { IConsultaRepository } from '@domain/repositories/consulta.repository.interface';
+import { CreateConsultaInput } from '@domain/entities/consulta.entity';
 import { logger } from '../../infrastructure/logging/logger';
 
 export class CreateConsultaUseCase {

@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para obtener un tercero por su ID
 
-import { Tercero } from '../../../domain/entities/tercero.entity';
-import { ITerceroRepository } from '../../../domain/repositories/tercero.repository.interface';
+import { Tercero } from '@domain/entities/tercero.entity';
+import { ITerceroRepository } from '@domain/repositories/tercero.repository.interface';
 
 export class GetTerceroByIdUseCase {
   constructor(private repository: ITerceroRepository) {}

@@ -6,8 +6,6 @@
 import { Router, Request, Response } from 'express';
 import { requireAuthJson } from '../../infrastructure/middleware/clerk-auth';
 import { depositoController } from '../controllers/deposito.controller';
-import { listDepositosUseCase } from '../../application/use-cases/list-depositos.use-case';
-import { depositoRepository } from '../../infrastructure/repositories/deposito.repository';
 import { getSupabaseClient } from '../../infrastructure/database/supabase/client';
 import { logger } from '../../infrastructure/logging/logger';
 

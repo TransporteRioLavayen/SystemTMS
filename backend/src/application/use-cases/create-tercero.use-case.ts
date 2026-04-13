@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para crear un tercero
 
-import { Tercero } from '../../../domain/entities/tercero.entity';
-import { ITerceroRepository } from '../../../domain/repositories/tercero.repository.interface';
+import { Tercero } from '@domain/entities/tercero.entity';
+import { ITerceroRepository } from '@domain/repositories/tercero.repository.interface';
 import { CreateTerceroDTO } from '../dto/create-tercero.dto';
 
 export class ValidationError extends Error {
@@ -24,6 +24,6 @@ export class CreateTerceroUseCase {
       throw new ValidationError('Ya existe un tercero con esta razón social');
     }
 
-    return this.repository.create(data);
+    return this.repository.create(data as any);
   }
 }

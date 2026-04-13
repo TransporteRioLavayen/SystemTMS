@@ -12,7 +12,10 @@ export class CotizacionController {
   async create(req: Request, res: Response) {
     try {
       // Validar datos de entrada
-      const validatedData: CreateCotizacionDto = CreateCotizacionSchema.parse(req.body);
+      const parsed = CreateCotizacionSchema.parse(req.body);
+      
+      // Forzar tipo requerido para TypeScript
+      const validatedData = parsed as Required<typeof parsed>;
 
       // Crear cotización en la base de datos
       const cotizacion = await cotizacionRepository.create(validatedData);

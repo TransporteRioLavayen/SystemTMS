@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para obtener un depósito específico
 
-import { Deposito } from '../../../domain/entities/deposito.entity';
-import { IDepositoRepository } from '../../../domain/repositories/deposito.repository.interface';
+import { Deposito } from '@domain/entities/deposito.entity';
+import { IDepositoRepository } from '@domain/repositories/deposito.repository.interface';
 import { toDepositoResponseDTO, DepositoResponseDTO } from '../dto/deposito-response.dto';
 
 export class NotFoundError extends Error {

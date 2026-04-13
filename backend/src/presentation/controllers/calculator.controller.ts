@@ -9,7 +9,7 @@ import { CalculatePricingUseCase, CalculatePricingInput } from '../../applicatio
 import { ITariffRateRepository } from '../../domain/repositories/tariff-rate.repository.interface';
 import { ICalculatorFactorRepository } from '../../domain/repositories/calculator-factor.repository.interface';
 import { ILocalityRepository } from '../../domain/repositories/locality.repository.interface';
-import { logger } from '../logger';
+import { logger } from '../../infrastructure/logging/logger';
 
 export class CalculatorController {
   private useCase: CalculatePricingUseCase;
