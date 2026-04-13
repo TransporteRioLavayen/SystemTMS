@@ -3,7 +3,7 @@
 // =============================================================================
 // Application Layer - Caso de uso para actualizar un depósito
 
-import { IDepositoRepository } from '../../domain/repositories/deposito.repository.interface';
+import { IDepositoRepository } from '../../../domain/repositories/deposito.repository.interface';
 import { UpdateDepositoDTO } from '../dto/update-deposito.dto';
 import { toDepositoResponseDTO, DepositoResponseDTO } from '../dto/deposito-response.dto';
 import { NotFoundError, ValidationError } from './get-deposito-by-id.use-case';

@@ -19,8 +19,9 @@ import { Request, Response, NextFunction } from 'express';
 /**
  * Roles disponibles en el sistema.
  * Se almacenan como metadata pública en Clerk (publicMetadata.role).
+ * Coincide con la tabla public.users en Supabase.
  */
-export type UserRole = 'ADMIN' | 'OPERADOR' | 'VIEWER';
+export type UserRole = 'ADMIN' | 'SUPERVISOR' | 'OPERADOR' | 'CHOFER';
 
 /**
  * Request extendido con datos de Clerk.

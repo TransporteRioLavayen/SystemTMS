@@ -2,8 +2,8 @@
 // GET PLANILLA BY ID USE CASE - BACKEND
 // =============================================================================
 
-import { Planilla } from '../../domain/entities/planilla.entity';
-import { IPlanillaRepository } from '../../domain/repositories/planilla.repository.interface';
+import { Planilla } from '../../../domain/entities/planilla.entity';
+import { IPlanillaRepository } from '../../../domain/repositories/planilla.repository.interface';
 
 export class GetPlanillaByIdUseCase {
   constructor(private repository: IPlanillaRepository) {}

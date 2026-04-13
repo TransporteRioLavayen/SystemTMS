@@ -16,9 +16,14 @@ export class SupabaseDepositoRepository implements IDepositoRepository {
 
   async findAllPaginated(options: { offset: number; limit: number; includeInactive?: boolean }): Promise<{ data: Deposito[]; total: number }> {
     const supabase = getSupabaseClient();
+    
+    console.log('[DepositoRepository] Querying with options:', options);
+    console.log('[DepositoRepository] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 20) + '...');
+    
     let query = supabase.from('depositos').select('*', { count: 'exact' });
     
     if (!options.includeInactive) {
+      console.log('[DepositoRepository] Filtering by estado = activo');
       query = query.eq('estado', 'activo');
     }
     
@@ -26,7 +31,15 @@ export class SupabaseDepositoRepository implements IDepositoRepository {
       .order('created_at', { ascending: false })
       .range(options.offset, options.offset + options.limit - 1);
     
+    console.log('[DepositoRepository] Raw response - data:', data?.length, 'count:', count, 'error:', error);
+    
     if (error) {
+      console.error('[DepositoRepository] Supabase Error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       throw new Error(`Error fetching depositos: ${error.message}`);
     }
     

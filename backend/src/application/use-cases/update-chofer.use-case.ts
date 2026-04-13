@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para actualizar un chofer
 
-import { Chofer } from '../../domain/entities/chofer.entity';
-import { IChoferRepository } from '../../domain/repositories/chofer.repository.interface';
+import { Chofer } from '../../../domain/entities/chofer.entity';
+import { IChoferRepository } from '../../../domain/repositories/chofer.repository.interface';
 import { UpdateChoferDTO } from '../dto/update-chofer.dto';
 import { ValidationError } from './create-chofer.use-case';
 

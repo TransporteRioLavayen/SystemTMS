@@ -3,7 +3,7 @@
 // =============================================================================
 // Application Layer - Caso de uso para eliminar una unidad (soft delete)
 
-import { IUnidadRepository } from '../../domain/repositories/unidad.repository.interface';
+import { IUnidadRepository } from '../../../domain/repositories/unidad.repository.interface';
 
 export class DeleteUnidadUseCase {
   constructor(private repository: IUnidadRepository) {}

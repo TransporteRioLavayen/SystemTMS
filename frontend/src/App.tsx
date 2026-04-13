@@ -26,9 +26,12 @@ import GestionDepositos from './presentation/pages/GestionDepositos';
 import GestionUnidades from './presentation/pages/GestionUnidades';
 import GestionChoferes from './presentation/pages/GestionChoferes';
 import GestionTerceros from './presentation/pages/GestionTerceros';
+import GestionPrecios from './presentation/pages/GestionPrecios';
 import ChoferView from './presentation/pages/ChoferView';
 import LandingPage from './presentation/pages/LandingPage';
 import TrackingPage from './presentation/pages/TrackingPage';
+import UserManagement from './presentation/pages/UserManagement';
+import GestionConsultas from './presentation/pages/GestionConsultas';
 
 // =============================================================================
 // CLERK PUBLISHABLE KEY
@@ -120,7 +123,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-      <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+      <Route path="/register" element={<Navigate to="/login" replace />} />
       <Route path="/chofer" element={<ChoferView />} />
       <Route path="/tracking" element={<TrackingPage />} />
       <Route path="/tracking/:code" element={<TrackingPage />} />
@@ -135,6 +138,9 @@ function AppRoutes() {
         <Route path="flota/unidades" element={<GestionUnidades />} />
         <Route path="flota/choferes" element={<GestionChoferes />} />
         <Route path="flota/terceros" element={<GestionTerceros />} />
+        <Route path="admin/precios" element={<GestionPrecios />} />
+        <Route path="configuracion/usuarios" element={<UserManagement />} />
+        <Route path="configuracion/consultas" element={<GestionConsultas />} />
       </Route>
       
       <Route path="*" element={<Navigate to="/" replace />} />

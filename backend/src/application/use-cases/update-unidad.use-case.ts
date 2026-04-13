@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para actualizar una unidad
 
-import { Unidad } from '../../domain/entities/unidad.entity';
-import { IUnidadRepository } from '../../domain/repositories/unidad.repository.interface';
+import { Unidad } from '../../../domain/entities/unidad.entity';
+import { IUnidadRepository } from '../../../domain/repositories/unidad.repository.interface';
 import { UpdateUnidadDTO } from '../dto/update-unidad.dto';
 import { ValidationError } from './create-unidad.use-case';
 

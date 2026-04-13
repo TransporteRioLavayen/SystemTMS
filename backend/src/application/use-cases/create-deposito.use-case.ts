@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para crear un nuevo depósito
 
-import { IDepositoRepository } from '../../domain/repositories/deposito.repository.interface';
-import { CreateDepositoInput } from '../../domain/entities/deposito.entity';
+import { IDepositoRepository } from '../../../domain/repositories/deposito.repository.interface';
+import { CreateDepositoInput } from '../../../domain/entities/deposito.entity';
 import { CreateDepositoDTO } from '../dto/create-deposito.dto';
 import { toDepositoResponseDTO, DepositoResponseDTO } from '../dto/deposito-response.dto';
 

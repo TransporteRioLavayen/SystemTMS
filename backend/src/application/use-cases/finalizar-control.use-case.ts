@@ -5,8 +5,8 @@
 // Actualiza los remitos con datos de control (bultos recibidos, peso, dirección, whatsapp)
 // y determina el estado final según si hay diferencias de bultos
 
-import { Planilla } from '../../domain/entities/planilla.entity';
-import { IPlanillaRepository } from '../../domain/repositories/planilla.repository.interface';
+import { Planilla } from '../../../domain/entities/planilla.entity';
+import { IPlanillaRepository } from '../../../domain/repositories/planilla.repository.interface';
 import { FinalizarControlDto } from '../dto/finalizar-control.dto';
 
 export class FinalizarControlUseCase {

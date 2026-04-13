@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dep-001",
+    "nombre": "Casa Central - San Pedro de Jujuy",
+    "ubicacion": "La Urbana S/N - Ex Parque Industrial - San Pedro de Jujuy, Jujuy",
+    "lat": -24.262029782752,
+    "lng": -64.9049238912066,
+    "estado": "activo"
+  },
+  {
+    "id": "dep-002",
+    "nombre": "Anexo La Quiaca",
+    "ubicacion": "Prolongacion Entre Rios - Bº Santa Clara, La Quiaca, Jujuy",
+    "lat": -22.1001907336056,
+    "lng": -65.6053321847284,
+    "estado": "activo"
+  },
+  {
+    "id": "dep-003",
+    "nombre": "Anexo San Ramón de la Nueva Orán",
+    "ubicacion": "Calle Sarmiento 419, Orán, Salta",
+    "lat": -23.1298439174664,
+    "lng": -64.3248482892676,
+    "estado": "activo"
+  },
+  {
+    "id": "dep-004",
+    "nombre": "Anexo Rosario",
+    "ubicacion": "Calle Netri 1460, Rosario, Santa Fe",
+    "lat": -32.903309801629,
+    "lng": -60.6982824570873,
+    "estado": "activo"
+  },
+  {
+    "id": "dep-005",
+    "nombre": "Anexo Córdoba Capital",
+    "ubicacion": "Avenida 11 de Septiembre 300, Córdoba, Córdoba",
+    "lat": -31.4462521037177,
+    "lng": -64.1466039360177,
+    "estado": "activo"
+  },
+  {
+    "id": "dep-006",
+    "nombre": "Anexo CABA Parque Patricios",
+    "ubicacion": "Calle Monteagudo 663, CABA, Buenos Aires",
+    "lat": -34.6448107113394,
+    "lng": -58.404234512414,
+    "estado": "activo"
+  }
+]

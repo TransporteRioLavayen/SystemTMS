@@ -17,11 +17,18 @@ import {
 
 const router = Router();
 
-router.use(requireAuthJson());
+// =============================================================================
+// RUTAS PÚBLICAS (sin autenticación)
+// =============================================================================
+
+// GET /api/planillas/tracking/:code - Consultar tracking público por código
+router.get('/tracking/:code', planillaController.getTracking.bind(planillaController));
 
 // =============================================================================
-// RUTAS PLANILLAS
+// RUTAS PROTEGIDAS (requieren autenticación)
 // =============================================================================
+
+router.use(requireAuthJson());
 
 // GET /api/planillas - Listar todas las planillas
 router.get('/', planillaController.list.bind(planillaController));
@@ -49,8 +56,5 @@ router.post('/:id/confirmar-llegada', validateBody(confirmarLlegadaSchema), plan
 
 // POST /api/planillas/:id/finalizar-control - Finalizar control de bultos (con validación)
 router.post('/:id/finalizar-control', validateBody(finalizarControlSchema), planillaController.finalizarControl.bind(planillaController));
-
-// GET /api/tracking/:code - Consultar tracking por código
-router.get('/tracking/:code', planillaController.getTracking.bind(planillaController));
 
 export default router;

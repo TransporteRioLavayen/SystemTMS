@@ -72,7 +72,7 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center bg-white px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
-            <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4">
               <span className="text-white text-2xl font-bold">A</span>
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Bienvenido de vuelta</h1>
@@ -97,7 +97,7 @@ export default function Login() {
                 autoComplete="email"
                 value={email} 
                 onChange={e => setEmail(e.target.value)} 
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all" 
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" 
                 placeholder="tu@ejemplo.com" 
               />
             </div>
@@ -106,7 +106,7 @@ export default function Login() {
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Contraseña
                 </label>
-                <a href="#" className="text-xs text-indigo-600 hover:text-indigo-500 font-medium">¿Olvidaste tu contraseña?</a>
+                <a href="#" className="text-xs text-emerald-600 hover:text-emerald-500 font-medium">¿Olvidaste tu contraseña?</a>
               </div>
               <input 
                 id="password"
@@ -115,30 +115,25 @@ export default function Login() {
                 autoComplete="current-password"
                 value={password} 
                 onChange={e => setPassword(e.target.value)} 
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all" 
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" 
                 placeholder="••••••••" 
               />
             </div>
             <button 
               type="submit" 
               disabled={loading || !isLoaded}
-              className="w-full py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-100 transition-all disabled:opacity-70"
+              className="w-full py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-100 transition-all disabled:opacity-70"
             >
               {loading ? 'Ingresando...' : 'Iniciar Sesión'}
             </button>
           </form>
           
-          <p className="mt-8 text-center text-sm text-gray-600">
-            ¿No tenés una cuenta?{' '}
-            <Link to="/register" className="text-indigo-600 font-medium hover:text-indigo-500">
-              Registrate
-            </Link>
-          </p>
+          {/* Registro suspendido temporalmente */}
         </div>
       </div>
 
       {/* Right side - Image */}
-      <div className="hidden lg:block lg:flex-1 relative bg-indigo-900">
+      <div className="hidden lg:block lg:flex-1 relative bg-emerald-900">
         <img 
           src="https://picsum.photos/seed/logistics/1920/1080" 
           alt="Logística de transporte" 
@@ -148,7 +143,7 @@ export default function Login() {
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="text-white max-w-lg text-center">
             <h2 className="text-4xl font-bold mb-6">Gestión de Flota y Logística</h2>
-            <p className="text-lg text-indigo-100">Optimizá tus rutas, administrá tus unidades y controlá tus planillas de viaje en un solo lugar.</p>
+            <p className="text-lg text-emerald-100">Optimizá tus rutas, administrá tus unidades y controlá tus planillas de viaje en un solo lugar.</p>
           </div>
         </div>
       </div>

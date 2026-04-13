@@ -2,8 +2,8 @@
 // LIST PLANILLAS USE CASE - BACKEND
 // =============================================================================
 
-import { Planilla } from '../../domain/entities/planilla.entity';
-import { IPlanillaRepository } from '../../domain/repositories/planilla.repository.interface';
+import { Planilla } from '../../../domain/entities/planilla.entity';
+import { IPlanillaRepository } from '../../../domain/repositories/planilla.repository.interface';
 
 export class ListPlanillasUseCase {
   constructor(private repository: IPlanillaRepository) {}
