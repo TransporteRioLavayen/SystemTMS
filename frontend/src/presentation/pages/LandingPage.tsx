@@ -375,9 +375,9 @@ export default function LandingPage() {
                   Contacto
                 </a>
               )}
-              
+
               {/* Mobile Menu Button */}
-              <button 
+              <button
                 className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
@@ -494,7 +494,7 @@ export default function LandingPage() {
             </div>
             <div className="relative z-10">
               <h2 className="text-3xl font-bold mb-4">Sigue tu envío en tiempo real</h2>
-              <p className="text-emerald-100 mb-8 max-w-xl">Ingresa el código de seguimiento (ID de Remito) que te proporcionamos para conocer el estado exacto de tu paquete.</p>
+              <p className="text-emerald-100 mb-8 max-w-xl">Ingresa el código de seguimiento que te enviamos por whatsapp para conocer el estado exacto de tu paquete.</p>
 
               <form onSubmit={handleTrack} className="flex flex-col sm:flex-row gap-3 max-w-2xl">
                 <div className="relative flex-1">
