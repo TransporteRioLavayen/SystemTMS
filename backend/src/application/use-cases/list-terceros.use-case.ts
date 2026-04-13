@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para listar terceros
 
-import { Tercero } from '../../domain/entities/tercero.entity';
-import { ITerceroRepository } from '../../domain/repositories/tercero.repository.interface';
+import { Tercero } from '../../../domain/entities/tercero.entity';
+import { ITerceroRepository } from '../../../domain/repositories/tercero.repository.interface';
 
 export class ListTercerosUseCase {
   constructor(private repository: ITerceroRepository) {}

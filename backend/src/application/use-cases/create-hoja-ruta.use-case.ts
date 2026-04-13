@@ -2,8 +2,8 @@
 // CREATE HOJA DE RUTA USE CASE - BACKEND
 // =============================================================================
 
-import { HojaDeRuta } from '../../domain/entities/hoja-ruta.entity';
-import { IHojaDeRutaRepository } from '../../domain/repositories/hoja-ruta.repository.interface';
+import { HojaDeRuta } from '../../../domain/entities/hoja-ruta.entity';
+import { IHojaDeRutaRepository } from '../../../domain/repositories/hoja-ruta.repository.interface';
 import { CreateHojaDeRutaDto } from '../dto/create-hoja-ruta.dto';
 
 export class CreateHojaDeRutaUseCase {

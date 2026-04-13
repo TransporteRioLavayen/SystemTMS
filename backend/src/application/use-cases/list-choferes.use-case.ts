@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para listar choferes
 
-import { Chofer } from '../../domain/entities/chofer.entity';
-import { IChoferRepository } from '../../domain/repositories/chofer.repository.interface';
+import { Chofer } from '../../../domain/entities/chofer.entity';
+import { IChoferRepository } from '../../../domain/repositories/chofer.repository.interface';
 
 export class ListChoferesUseCase {
   constructor(private repository: IChoferRepository) {}

@@ -3,8 +3,8 @@
 // =============================================================================
 // Application Layer - Caso de uso para listar unidades
 
-import { Unidad } from '../../domain/entities/unidad.entity';
-import { IUnidadRepository } from '../../domain/repositories/unidad.repository.interface';
+import { Unidad } from '../../../domain/entities/unidad.entity';
+import { IUnidadRepository } from '../../../domain/repositories/unidad.repository.interface';
 
 export class ListUnidadesUseCase {
   constructor(private repository: IUnidadRepository) {}

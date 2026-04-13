@@ -5,7 +5,7 @@ dotenv.config({ path: '.env.local' });
 import express, { Request, Response as ExpressResponse, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import { getSwaggerSpec } from './config/swagger';
 
@@ -14,6 +14,7 @@ import { clerkMiddleware } from '@clerk/express';
 
 // Rutas
 import authRoutes from './presentation/routes/auth.routes';
+import adminRoutes from './presentation/routes/admin.routes';
 import depositoRoutes from './presentation/routes/deposito.routes';
 import unidadRoutes from './presentation/routes/unidad.routes';
 import choferRoutes from './presentation/routes/chofer.routes';
@@ -23,6 +24,9 @@ import hojaRutaRoutes from './presentation/routes/hoja-ruta.routes';
 import realtimeRoutes from './presentation/routes/realtime.routes';
 import barcodeRoutes from './presentation/routes/barcode.routes';
 import analyticsRoutes from './presentation/routes/analytics.routes';
+import consultaRoutes from './presentation/routes/consulta.routes';
+import pricingRoutes from './presentation/routes/pricing.routes';
+import cotizacionRoutes from './presentation/routes/cotizacion.routes';
 
 // Realtime
 import { startSupabaseRealtime } from './infrastructure/realtime/supabase-realtime';
@@ -77,6 +81,20 @@ const authLimiter = rateLimit({
   },
 });
 
+const trackingLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    error: 'Too Many Requests',
+    message: 'Demasiadas consultas de tracking. Intenta de nuevo más tarde.',
+  },
+  keyGenerator: (req) => {
+    return ipKeyGenerator(req.ip || 'unknown');
+  },
+});
+
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -112,15 +130,19 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(getSwaggerSpec(), {
 }));
 
 // Rutas de la API
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/pricing', pricingRoutes);
+app.use('/api/planillas', trackingLimiter, planillaRoutes);
 app.use('/api/depositos', depositoRoutes);
 app.use('/api/unidades', unidadRoutes);
 app.use('/api/choferes', choferRoutes);
 app.use('/api/terceros', terceroRoutes);
-app.use('/api/planillas', planillaRoutes);
 app.use('/api/hojas-ruta', hojaRutaRoutes);
 app.use('/api/barcodes', barcodeRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/consultas', consultaRoutes);
+app.use('/api/cotizaciones', cotizacionRoutes);
 app.use('/api', realtimeRoutes);
 
 // =============================================================================

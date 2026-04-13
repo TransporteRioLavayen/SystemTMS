@@ -4,8 +4,8 @@
 // Transición: borrador -> viaje
 // Genera códigos de seguimiento (TRK-XXXXX) para cada remito
 
-import { Planilla } from '../../domain/entities/planilla.entity';
-import { IPlanillaRepository } from '../../domain/repositories/planilla.repository.interface';
+import { Planilla } from '../../../domain/entities/planilla.entity';
+import { IPlanillaRepository } from '../../../domain/repositories/planilla.repository.interface';
 
 export class ConfirmarViajeUseCase {
   constructor(private repository: IPlanillaRepository) {}

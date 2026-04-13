@@ -4,8 +4,8 @@
 // Transición: viaje -> control
 // Estado tracking: En casa central
 
-import { Planilla } from '../../domain/entities/planilla.entity';
-import { IPlanillaRepository } from '../../domain/repositories/planilla.repository.interface';
+import { Planilla } from '../../../domain/entities/planilla.entity';
+import { IPlanillaRepository } from '../../../domain/repositories/planilla.repository.interface';
 
 export class ConfirmarLlegadaUseCase {
   constructor(private repository: IPlanillaRepository) {}

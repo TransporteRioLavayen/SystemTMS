@@ -3,7 +3,7 @@
 // =============================================================================
 // Application Layer - Caso de uso para eliminar un chofer (hard delete)
 
-import { IChoferRepository } from '../../domain/repositories/chofer.repository.interface';
+import { IChoferRepository } from '../../../domain/repositories/chofer.repository.interface';
 
 export class DeleteChoferUseCase {
   constructor(private repository: IChoferRepository) {}

@@ -41,6 +41,14 @@ export interface UpdateDepositoInput {
 
 export const depositoService = {
   /**
+   * Lista depósitos públicos activos (sin auth)
+   */
+  async getPublicActivos(): Promise<Deposito[]> {
+    const response = await apiClient.get('/depositos/public');
+    return response.data.data;
+  },
+
+  /**
    * Lista todos los depósitos
    * @param includeInactive - Include inactive deposits (optional)
    */

@@ -4,4 +4,5 @@ export interface User {
   name: string;
   avatarUrl?: string;
   bio?: string;
+  role?: 'ADMIN' | 'OPERADOR' | 'CHOFER';
 }

@@ -1,6 +1,6 @@
-# LogisPro Backend
+# Transporte Rio Lavayen - Backend
 
-API REST para el sistema de gestión logística - Transporte Río Lavayén.
+API REST robusta para el sistema de gestión logística basado en Node.js y TypeScript.
 
 ## 🚀 Quick Start
 

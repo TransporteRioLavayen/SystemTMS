@@ -1,0 +1,8 @@
+[
+  {"nombre": "IVA", "valor": 1.21, "tipo": "multiplicador", "descripcion": "Impuesto al Valor Agregado (21%)", "estado": "activo"},
+  {"nombre": "SEGURO_CARGA", "valor": 0.008, "tipo": "porcentaje", "descripcion": "Seguro de carga (0.8% del valor declarado)", "estado": "activo"},
+  {"nombre": "FACTOR_DISTANCIA_LARGA", "valor": 0.0002, "tipo": "multiplicador", "descripcion": "Multiplicador adicional para distancias mayores a 1000km", "estado": "activo"},
+  {"nombre": "FACTOR_CORRECCION_DISTANCIA", "valor": 1.3, "tipo": "multiplicador", "descripcion": "Factor de corrección para rutas terrestres (no son línea recta)", "estado": "activo"},
+  {"nombre": "DESCUENTO_VOLUMEN", "valor": 0.95, "tipo": "multiplicador", "descripcion": "Descuento por volumen de carga (5%)", "estado": "inactivo"},
+  {"nombre": "RECARGO_DOMICILIO", "valor": 500, "tipo": "fijo", "descripcion": "Costo adicional por entrega a domicilio", "estado": "activo"}
+]
