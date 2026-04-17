@@ -25,7 +25,6 @@ import realtimeRoutes from './presentation/routes/realtime.routes';
 import barcodeRoutes from './presentation/routes/barcode.routes';
 import analyticsRoutes from './presentation/routes/analytics.routes';
 import consultaRoutes from './presentation/routes/consulta.routes';
-import pricingRoutes from './presentation/routes/pricing.routes';
 import cotizacionRoutes from './presentation/routes/cotizacion.routes';
 
 // Realtime
@@ -99,13 +98,28 @@ const trackingLimiter = rateLimit({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Clerk Middleware
+// =============================================================================
+// RUTAS PÚBLICAS DEL CHOFERVIEW (SIN AUTH)
+// =============================================================================
+// ChoferView público - lista de choferes sin auth
+app.get('/api/choferes/public', async (req: Request, res: ExpressResponse, next: NextFunction) => {
+  try {
+    const { choferController } = await import('./presentation/controllers/chofer.controller');
+    await choferController.list(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// =============================================================================
+// CLERK MIDDLEWARE
+// =============================================================================
 app.use(clerkMiddleware());
 
 app.use('/api/', generalLimiter);
 
 // =============================================================================
-// RUTAS
+// RUTAS (con AUTH)
 // =============================================================================
 
 app.get('/api/health', (req: Request, res: ExpressResponse) => {
@@ -132,7 +146,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(getSwaggerSpec(), {
 // Rutas de la API
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/pricing', pricingRoutes);
 app.use('/api/planillas', trackingLimiter, planillaRoutes);
 app.use('/api/depositos', depositoRoutes);
 app.use('/api/unidades', unidadRoutes);

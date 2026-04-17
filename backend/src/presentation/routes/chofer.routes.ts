@@ -9,10 +9,17 @@ import { choferController } from '../controllers/chofer.controller';
 
 const router = Router();
 
+// =============================================================================
+// RUTAS PÚBLICAS
+// =============================================================================
+// GET /api/choferes - Listar todos (público para el ChoferView)
+router.get('/', choferController.list.bind(choferController));
+
+// =============================================================================
+// RUTAS PROTEGIDAS
+// =============================================================================
 router.use(requireAuthJson());
 
-// Rutas para el módulo de choferes
-router.get('/', choferController.list.bind(choferController));
 router.get('/:id', choferController.getById.bind(choferController));
 router.post('/', choferController.create.bind(choferController));
 router.put('/:id', choferController.update.bind(choferController));

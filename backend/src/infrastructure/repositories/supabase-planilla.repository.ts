@@ -9,13 +9,14 @@ import { logger } from '../logging/logger';
 
 export class SupabasePlanillaRepository implements IPlanillaRepository {
   async findAll(includeInactivos: boolean = false): Promise<Planilla[]> {
-    const result = await this.findAllPaginated({ offset: 0, limit: 10000 });
+    const result = await this.findAllPaginated({ offset: 0, limit: 50 }); // OPTIMIZACIÓN: límite razonable
     return result.data;
   }
 
   async findAllPaginated(options: { offset: number; limit: number; estado?: string }): Promise<{ data: Planilla[]; total: number }> {
     const supabase = getSupabaseClient();
-    let query = supabase.from('planillas').select('*', { count: 'exact' });
+    // OPTIMIZACIÓN: Especificar columnas necesarias
+    let query = supabase.from('planillas').select('id, sucursal_origen, sucursal_destino, fecha_salida_estimada, fecha_llegada_estimada, camion, chofer, estado, comentarios, km_salida, km_llegada, created_at, updated_at', { count: 'exact' });
     
     if (options.estado) {
       query = query.eq('estado', options.estado);
@@ -36,7 +37,7 @@ export class SupabasePlanillaRepository implements IPlanillaRepository {
       const planillaIds = planillas.map(p => p.id);
       const { data: remitosData } = await supabase
         .from('remitos')
-        .select('*')
+        .select('id, planilla_id, remitente, numero_remito, destinatario, direccion, whatsapp, bultos, peso_total, valor_declarado, seguimiento, bultos_recibidos, estado')
         .in('planilla_id', planillaIds);
       
       // Agrupar remitos por planilla_id
@@ -65,7 +66,7 @@ export class SupabasePlanillaRepository implements IPlanillaRepository {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('planillas')
-      .select('*')
+      .select('id, sucursal_origen, sucursal_destino, fecha_salida_estimada, fecha_llegada_estimada, camion, chofer, estado, comentarios, km_salida, km_llegada, created_at, updated_at')
       .eq('id', id)
       .single();
     
@@ -138,7 +139,7 @@ export class SupabasePlanillaRepository implements IPlanillaRepository {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('remitos')
-      .select('*')
+      .select('id, planilla_id, remitente, numero_remito, destinatario, direccion, whatsapp, bultos, peso_total, valor_declarado, seguimiento, bultos_recibidos, estado, created_at')
       .eq('estado', estado)
       .order('created_at', { ascending: false });
     
@@ -168,7 +169,7 @@ export class SupabasePlanillaRepository implements IPlanillaRepository {
     const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('remitos')
-      .select('*')
+      .select('id, planilla_id, remitente, numero_remito, destinatario, direccion, whatsapp, bultos, peso_total, valor_declarado, seguimiento, bultos_recibidos, estado')
       .eq('planilla_id', planillaId);
     
     if (error) {

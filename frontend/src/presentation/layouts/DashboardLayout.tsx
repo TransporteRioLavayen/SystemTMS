@@ -6,7 +6,7 @@ import { useSSENotifications } from '../../application/hooks/useSSENotifications
 import NotificationCenter from '../components/NotificationCenter';
 import UserMenu from '../components/UserMenu';
 import { LABELS } from '../../application/constants/labels';
-import { Home, Menu, FileText, Package, Map, Truck, Users, Briefcase, Building, Settings, Wifi, WifiOff, Mail, DollarSign } from 'lucide-react';
+import { Home, Menu, FileText, Package, Map, Truck, Users, Briefcase, Building, Settings, Wifi, WifiOff, Mail } from 'lucide-react';
 
 export default function DashboardLayout() {
   const { onlineCount, hasRole } = useAuth();
@@ -139,27 +139,14 @@ export default function DashboardLayout() {
             </div>
           </div>
 
-           {/* Sección Administración - Para ADMIN */}
-           {hasRole('ADMIN') && (
-             <div>
-               <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-6">
-                 Administración
-               </p>
-               <div className="space-y-1">
-                 <Link
-                   to="/dashboard/admin/precios"
-                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                     location.pathname === '/dashboard/admin/precios' 
-                       ? 'bg-emerald-50 text-emerald-700 font-medium' 
-                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                   }`}
-                 >
-                   <DollarSign size={20} className={location.pathname === '/dashboard/admin/precios' ? 'text-emerald-600' : 'text-gray-400'} />
-                   Gestión de Precios
-                 </Link>
-               </div>
-             </div>
-           )}
+{/* Sección Administración - Para ADMIN */}
+            {hasRole('ADMIN') && (
+              <div>
+                <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-6">
+                  Administración
+                </p>
+              </div>
+            )}
 
            {/* Sección Configuración - Solo visible para ADMIN */}
            {hasRole('ADMIN') && (

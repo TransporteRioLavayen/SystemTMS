@@ -23,7 +23,7 @@ export const usePlanillas = () => {
   const planillasCompletadas = useMemo(() => planillas.filter(p => p.estado === 'completo' || p.estado === 'incompleto'), [planillas]);
 
   const todasLasPlanillas = useMemo(() => {
-    return [...planillas].sort((a, b) => b.id.localeCompare(a.id));
+    return [...planillas].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [planillas]);
 
   const metrics = useMemo(() => {

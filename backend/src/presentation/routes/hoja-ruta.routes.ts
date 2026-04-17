@@ -3,17 +3,30 @@
 // =============================================================================
 // Presentation Layer - Rutas HTTP para el módulo de hojas de ruta
 
-import { Router } from 'express';
-import { requireAuthJson } from '../../infrastructure/middleware/clerk-auth';
+import { Router, Request, Response, NextFunction } from 'express';
+import { requireAuthJson, authorizeRoles } from '../../infrastructure/middleware/clerk-auth';
 import { hojaDeRutaController } from '../controllers/hoja-ruta.controller';
+import type { UserRole } from '../../domain/entities/user-management.entity';
 
 const router = Router();
 
-router.use(requireAuthJson());
+// Middleware: por defecto requiere auth
+const requireAuth = requireAuthJson();
 
 // =============================================================================
-// RUTAS HOJAS DE RUTA
+// RUTAS PÚBLICAS DEL CHOFER VIEW (SIN AUTH)
 // =============================================================================
+// Estas rutas no requieren autenticación
+router.get('/chofer/:dni', hojaDeRutaController.findByChoferDni.bind(hojaDeRutaController));
+router.post('/:id/iniciar-turno', hojaDeRutaController.iniciarTurno.bind(hojaDeRutaController));
+router.post('/:id/terminar-turno', hojaDeRutaController.terminarTurno.bind(hojaDeRutaController));
+router.patch('/:id/remitos/:remitoId/estado', hojaDeRutaController.actualizarEstadoRemito.bind(hojaDeRutaController));
+router.patch('/:id/confirmar-completada', hojaDeRutaController.confirmarCompletada.bind(hojaDeRutaController));
+
+// =============================================================================
+// RUTAS PROTEGIDAS (CON AUTH)
+// =============================================================================
+router.use(requireAuth);
 
 // GET /api/hojas-ruta - Listar todas las hojas de ruta
 router.get('/', hojaDeRutaController.list.bind(hojaDeRutaController));

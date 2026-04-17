@@ -6,6 +6,11 @@ import { LABELS } from '../../application/constants/labels';
 
 type Screen = 'LOGIN' | 'ROUTES' | 'DELIVERIES' | 'DELIVERY_DETAIL';
 
+// Helpers para comparar estados (case-insensitive para hoja de ruta)
+const isHojaEnReparto = (estado: string) => estado?.toLowerCase() === 'en reparto';
+const isHojaCompletada = (estado: string) => estado?.toLowerCase() === 'completada';
+const isRemitoPendiente = (estado: string) => estado === 'En Base' || estado === 'En Reparto';
+
 interface Chofer {
   id: string;
   nombre: string;
@@ -31,13 +36,15 @@ export default function ChoferView() {
 
   const { common: c, driverPortal: dp } = LABELS;
 
-  // Cargar choferes directamente del backend
+  // Cargar choferes directamente del backend (ruta pública)
   useEffect(() => {
     const cargarChoferes = async () => {
       setChoferesLoading(true);
       setChoferesError(null);
       try {
-        const response = await apiClient.get('/choferes');
+        // Usar ruta pública sin auth
+        const response = await apiClient.get('/choferes/public');
+        console.log('[ChoferView] Choferes cargados:', response.data.data);
         setChoferes(response.data.data || []);
       } catch (err: any) {
         console.error('Error cargando choferes:', err);
@@ -87,8 +94,8 @@ export default function ChoferView() {
     try {
       const hojas = await hojaRutaService.findByChoferDni(choferLogueado.dni);
       setHojasDeRuta(hojas);
-      // Verificar si hay turno iniciado
-      const enReparto = hojas.some(h => h.estado === 'En reparto');
+      // Verificar si hay turno iniciado (comparar sin case-sensitive)
+      const enReparto = hojas.some(h => h.estado?.toLowerCase() === 'en reparto');
       setTurnoIniciado(enReparto);
     } catch (err) {
       console.error('Error cargando hojas:', err);
@@ -108,12 +115,23 @@ export default function ChoferView() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
-    const chofer = choferes.find(c => c.dni === dni);
+    
+    // Normalizar DNI (trim y uppercase)
+    const dniNormalizado = dni.trim().toUpperCase();
+    console.log('[ChoferView] DNI buscado:', dniNormalizado);
+    console.log('[ChoferView] DNIs disponibles:', choferes.map(c => c.dni));
+    
+    // Buscar chofer coincida exactamente ( case insensitive)
+    const chofer = choferes.find(c => c.dni && c.dni.trim().toUpperCase() === dniNormalizado);
+    
     if (chofer) {
+      console.log('[ChoferView] Login exitoso:', chofer.nombre);
       const session = { nombre: chofer.nombre, dni: chofer.dni };
       setChoferLogueado(session);
       setScreen('ROUTES');
     } else {
+      // DEBUG: mostrar todos los DNIs para saber el problema
+      console.log('[ChoferView] Chofer no encontrado. Lista de DNIs:', choferes.map(c => ({ dni: c.dni, nombre: c.nombre })));
       setLoginError('El DNI ingresado no corresponde a ningún chofer registrado.');
     }
   };
@@ -138,7 +156,7 @@ export default function ChoferView() {
       alert('Ingrese los kilómetros de salida.');
       return;
     }
-    const hoja = hojasDeRuta.find(h => h.estado === 'Lista para salir');
+    const hoja = hojasDeRuta.find(h => h.estado === 'Lista para salir' || h.estado?.toLowerCase() === 'lista para salir');
     if (!hoja) {
       alert('No hay hojas de ruta listas para iniciar.');
       return;
@@ -160,7 +178,7 @@ export default function ChoferView() {
   // Terminar turno
   const handleEndTurn = async () => {
     const km = parseInt(kmLlegada);
-    const hojaEnReparto = hojasDeRuta.find(h => h.estado === 'En reparto');
+    const hojaEnReparto = hojasDeRuta.find(h => isHojaEnReparto(h.estado));
     if (!hojaEnReparto || !km) {
       alert('Ingrese los kilómetros de llegada.');
       return;
@@ -190,7 +208,7 @@ export default function ChoferView() {
     try {
       await hojaRutaService.actualizarEstadoRemito(
         hojaSeleccionada.id,
-        remitoSeleccionado.id,
+        remitoSeleccionado.remitoId!,
         'Entregado'
       );
       setScreen('DELIVERIES');
@@ -217,7 +235,7 @@ export default function ChoferView() {
     try {
       await hojaRutaService.actualizarEstadoRemito(
         hojaSeleccionada.id,
-        remitoSeleccionado.id,
+        remitoSeleccionado.remitoId!,
         'Rechazado',
         rejectReason,
         rejectNotes || undefined
@@ -240,7 +258,7 @@ export default function ChoferView() {
 
   // Verificar si todas las entregas están completas
   const todasEntregasCompletas = hojasDeRuta
-    .filter(h => h.estado === 'En reparto')
+    .filter(h => isHojaEnReparto(h.estado))
     .every(h => h.cargas.length > 0 && h.cargas.every(c => c.estado === 'Entregado' || c.estado === 'Rechazado'));
 
   // Progreso de una hoja
@@ -301,7 +319,7 @@ export default function ChoferView() {
   // ==================== PANTALLA: HOJAS DE RUTA ====================
   if (screen === 'ROUTES') {
     const hojasVisibles = turnoIniciado
-      ? hojasDeRuta.filter(h => h.estado === 'En reparto' || h.estado === 'Completada')
+      ? hojasDeRuta.filter(h => isHojaEnReparto(h.estado) || isHojaCompletada(h.estado))
       : hojasDeRuta.filter(h => h.estado === 'Lista para salir');
 
     return (
@@ -393,14 +411,17 @@ export default function ChoferView() {
                   <div
                     key={hoja.id}
                     onClick={() => {
-                      if (turnoIniciado || hoja.estado === 'Lista para salir') {
+                      // Solo permitir entrar si el turno está iniciado Y la hoja está en reparto
+                      if (turnoIniciado && isHojaEnReparto(hoja.estado)) {
                         setHojaSeleccionada(hoja);
                         setScreen('DELIVERIES');
+                      } else if (!turnoIniciado) {
+                        alert('Iniciá el turno primero para ver los remitos.');
                       }
                     }}
                     className={`bg-white rounded-2xl shadow-sm border-2 p-5 active:scale-[0.98] transition-transform cursor-pointer ${
                       completa ? 'border-green-500 bg-green-50' : 'border-gray-100'
-                    }`}
+                    } ${!turnoIniciado || !isHojaEnReparto(hoja.estado) ? 'opacity-50' : ''}`}
                   >
                     <div className="flex justify-between items-start mb-3">
                       <div>
@@ -564,8 +585,9 @@ export default function ChoferView() {
                       remito.estado === 'Rechazado' ? 'bg-red-200 text-red-800' :
                       'bg-amber-100 text-amber-800'
                     }`}>
-                      {remito.estado === 'Entregado' ? 'Entregado' :
-                       remito.estado === 'Rechazado' ? 'Rechazado' : 'Pendiente'}
+{remito.estado === 'Entregado' ? 'Entregado' :
+                        remito.estado === 'Rechazado' ? 'Rechazado' :
+                        remito.estado === 'En Reparto' ? 'En Reparto' : 'En Base'}
                     </span>
                   </div>
                 </div>
@@ -579,7 +601,8 @@ export default function ChoferView() {
 
   // ==================== PANTALLA: DETALLE DE ENTREGA ====================
   if (screen === 'DELIVERY_DETAIL' && remitoSeleccionado && hojaSeleccionada) {
-    const isPending = remitoSeleccionado.estado === 'En Base' || remitoSeleccionado.estado === 'En reparto';
+    // Solo permitir acciones si el turno está iniciado y el remito está pendiente (En Base o En Reparto)
+    const isPending = turnoIniciado && (remitoSeleccionado.estado === 'En Base' || remitoSeleccionado.estado === 'En Reparto');
 
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -624,14 +647,15 @@ export default function ChoferView() {
                 remitoSeleccionado.estado === 'Rechazado' ? 'bg-red-200 text-red-800' :
                 'bg-amber-100 text-amber-800'
               }`}>
-                {remitoSeleccionado.estado === 'Entregado' ? 'Entregado' :
-                 remitoSeleccionado.estado === 'Rechazado' ? 'Rechazado' : 'Pendiente'}
+{remitoSeleccionado.estado === 'Entregado' ? 'Entregado' :
+                        remitoSeleccionado.estado === 'Rechazado' ? 'Rechazado' :
+                        remitoSeleccionado.estado === 'En Reparto' ? 'En Reparto' : 'En Base'}
               </span>
             </div>
           </div>
 
-          {/* Botones de acción (solo si está pendiente) */}
-          {isPending && (
+          {/* Botones de acción (solo si turno iniciado y remito pendiente) */}
+          {isPending ? (
             <div className="space-y-3">
               <button
                 onClick={handleDeliver}
@@ -649,6 +673,11 @@ export default function ChoferView() {
                 <XCircle size={24} />
                 {dp.markRejected}
               </button>
+            </div>
+          ) : (
+            <div className="text-center py-6 text-gray-500 bg-gray-50 rounded-xl">
+              <p className="font-medium">Primero iniciá el turno para poder gestionar los remitos</p>
+              <p className="text-sm mt-1">智慧 botón "INICIAR TURNO" arriba</p>
             </div>
           )}
         </div>
