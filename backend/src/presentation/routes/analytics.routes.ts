@@ -18,19 +18,55 @@ const router = Router();
 router.use(requireAuthJson());
 router.use(authorizeRoles('ADMIN', 'OPERADOR'));
 
+// =============================================================================
+// DASHBOARD PRINCIPAL
+// =============================================================================
+
 // Endpoint para los KPIs principales del dashboard
 router.get('/dashboard', analyticsController.getDashboard.bind(analyticsController));
 
-// Endpoint para métricas detalladas de remitos
+// Resumen ejecutivo (para KPI cards)
+router.get('/resumen', analyticsController.getResumen.bind(analyticsController));
+
+// =============================================================================
+// MÓDULOS ESPECÍFICOS
+// =============================================================================
+
+// Remitos
 router.get('/remitos', analyticsController.getRemitos.bind(analyticsController));
 
-// Endpoint para utilización y estado de la flota
+// Flota (unidades propias)
 router.get('/flota', analyticsController.getFlota.bind(analyticsController));
 
-// Endpoint para obtener tendencias históricas
+// Hojas de ruta
+router.get('/hojas-ruta', analyticsController.getHojasRuta.bind(analyticsController));
+
+// Choferes
+router.get('/choferes', analyticsController.getChoferes.bind(analyticsController));
+
+// Terceros (flota externa)
+router.get('/terceros', analyticsController.getTerceros.bind(analyticsController));
+
+// Depósitos
+router.get('/depositos', analyticsController.getDepositos.bind(analyticsController));
+
+// Consultas
+router.get('/consultas', analyticsController.getConsultas.bind(analyticsController));
+
+// Cotizaciones
+router.get('/cotizaciones', analyticsController.getCotizaciones.bind(analyticsController));
+
+// Planillas
+router.get('/planillas', analyticsController.getPlanillas.bind(analyticsController));
+
+// =============================================================================
+// TENDENCIAS Y ALERTAS
+// =============================================================================
+
+// Tendencias históricas
 router.get('/tendencias', analyticsController.getTendencias.bind(analyticsController));
 
-// Endpoint para alertas preventivas de mantenimiento
+// Alertas de mantenimiento y vencimientos
 router.get('/alertas', analyticsController.getAlertas.bind(analyticsController));
 
 export default router;

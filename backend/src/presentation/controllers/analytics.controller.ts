@@ -4,19 +4,22 @@
 // Presentation Layer - Controlador HTTP para el módulo de analíticas
 
 import { Request, Response, NextFunction } from 'express';
-import { GetDashboardStatsUseCase } from '../../application/use-cases/analytics/get-dashboard-stats.use-case';
-import { GetRemitosAnalyticsUseCase } from '../../application/use-cases/analytics/get-remitos-analytics.use-case';
-import { GetFlotaAnalyticsUseCase } from '../../application/use-cases/analytics/get-flota-analytics.use-case';
-import { GetTendenciaAnalyticsUseCase } from '../../application/use-cases/analytics/get-tendencia-analytics.use-case';
-import { GetAlertasAnalyticsUseCase } from '../../application/use-cases/analytics/get-alertas-analytics.use-case';
 import { analyticsRepository } from '../../infrastructure/repositories/supabase-analytics.repository';
-
-// Instancias de use cases
-const getDashboardStatsUseCase = new GetDashboardStatsUseCase(analyticsRepository);
-const getRemitosAnalyticsUseCase = new GetRemitosAnalyticsUseCase(analyticsRepository);
-const getFlotaAnalyticsUseCase = new GetFlotaAnalyticsUseCase(analyticsRepository);
-const getTendenciaAnalyticsUseCase = new GetTendenciaAnalyticsUseCase(analyticsRepository);
-const getAlertasUseCase = new GetAlertasAnalyticsUseCase(analyticsRepository);
+import { 
+  DashboardStats, 
+  RemitosAnalytics, 
+  FlotaAnalytics, 
+  TendenciaAnalytics, 
+  AlertaMantenimiento,
+  HojasRutaAnalytics,
+  ChoferesAnalytics,
+  TercerosAnalytics,
+  DepositosAnalytics,
+  ConsultasAnalytics,
+  CotizacionesAnalytics,
+  PlanillasAnalytics,
+  ResumenEjecutivo
+} from '../../domain/entities/analytics.entity';
 
 export class AnalyticsController {
   
@@ -29,11 +32,12 @@ export class AnalyticsController {
 
   /**
    * GET /api/analytics/dashboard
+   * Estadísticas principales del dashboard
    */
   async getDashboard(req: Request, res: Response, next: NextFunction) {
     try {
       const { start, end } = this.parseDates(req);
-      const stats = await getDashboardStatsUseCase.execute(start, end);
+      const stats = await analyticsRepository.getDashboardStats(start, end);
       res.json({ success: true, data: stats });
     } catch (error) {
       next(error);
@@ -42,11 +46,12 @@ export class AnalyticsController {
 
   /**
    * GET /api/analytics/remitos
+   * Analytics detallados de remitos
    */
   async getRemitos(req: Request, res: Response, next: NextFunction) {
     try {
       const { start, end } = this.parseDates(req);
-      const stats = await getRemitosAnalyticsUseCase.execute(start, end);
+      const stats = await analyticsRepository.getRemitosAnalytics(start, end);
       res.json({ success: true, data: stats });
     } catch (error) {
       next(error);
@@ -55,10 +60,106 @@ export class AnalyticsController {
 
   /**
    * GET /api/analytics/flota
+   * Analytics de flota (unidades propias)
    */
   async getFlota(req: Request, res: Response, next: NextFunction) {
     try {
-      const stats = await getFlotaAnalyticsUseCase.execute();
+      const stats = await analyticsRepository.getFlotaAnalytics();
+      res.json({ success: true, data: stats });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/analytics/hojas-ruta
+   * Analytics de hojas de ruta
+   */
+  async getHojasRuta(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { start, end } = this.parseDates(req);
+      const stats = await analyticsRepository.getHojasRutaAnalytics(start, end);
+      res.json({ success: true, data: stats });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/analytics/choferes
+   * Analytics de choferes
+   */
+  async getChoferes(req: Request, res: Response, next: NextFunction) {
+    try {
+      const stats = await analyticsRepository.getChoferesAnalytics();
+      res.json({ success: true, data: stats });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/analytics/terceros
+   * Analytics de terceros (flota externa)
+   */
+  async getTerceros(req: Request, res: Response, next: NextFunction) {
+    try {
+      const stats = await analyticsRepository.getTercerosAnalytics();
+      res.json({ success: true, data: stats });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/analytics/depositos
+   * Analytics de depósitos
+   */
+  async getDepositos(req: Request, res: Response, next: NextFunction) {
+    try {
+      const stats = await analyticsRepository.getDepositosAnalytics();
+      res.json({ success: true, data: stats });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/analytics/consultas
+   * Analytics de consultas
+   */
+  async getConsultas(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { start, end } = this.parseDates(req);
+      const stats = await analyticsRepository.getConsultasAnalytics(start, end);
+      res.json({ success: true, data: stats });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/analytics/cotizaciones
+   * Analytics de cotizaciones
+   */
+  async getCotizaciones(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { start, end } = this.parseDates(req);
+      const stats = await analyticsRepository.getCotizacionesAnalytics(start, end);
+      res.json({ success: true, data: stats });
+    } catch ( error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/analytics/planillas
+   * Analytics de planillas
+   */
+  async getPlanillas(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { start, end } = this.parseDates(req);
+      const stats = await analyticsRepository.getPlanillasAnalytics(start, end);
       res.json({ success: true, data: stats });
     } catch (error) {
       next(error);
@@ -67,11 +168,12 @@ export class AnalyticsController {
 
   /**
    * GET /api/analytics/tendencias
+   * Tendencias de remitos
    */
   async getTendencias(req: Request, res: Response, next: NextFunction) {
     try {
       const { start, end } = this.parseDates(req);
-      const stats = await getTendenciaAnalyticsUseCase.execute(start, end);
+      const stats = await analyticsRepository.getTendenciaAnalytics(start, end);
       res.json({ success: true, data: stats });
     } catch (error) {
       next(error);
@@ -80,10 +182,24 @@ export class AnalyticsController {
 
   /**
    * GET /api/analytics/alertas
+   * Alertas de mantenimiento y vencimientos
    */
   async getAlertas(req: Request, res: Response, next: NextFunction) {
     try {
-      const stats = await getAlertasUseCase.execute();
+      const stats = await analyticsRepository.getAlertasMantenimiento();
+      res.json({ success: true, data: stats });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/analytics/resumen
+   * Resumen ejecutivo para KPIs
+   */
+  async getResumen(req: Request, res: Response, next: NextFunction) {
+    try {
+      const stats = await analyticsRepository.getResumenEjecutivo();
       res.json({ success: true, data: stats });
     } catch (error) {
       next(error);
