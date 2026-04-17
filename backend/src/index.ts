@@ -105,7 +105,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/api/choferes/public', async (req: Request, res: ExpressResponse, next: NextFunction) => {
   try {
     const { choferController } = await import('./presentation/controllers/chofer.controller');
-    await choferController.list(req, res);
+    await choferController.list(req, res, next);
   } catch (err) {
     next(err);
   }

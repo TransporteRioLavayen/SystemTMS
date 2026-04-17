@@ -377,7 +377,7 @@ async actualizarEstadoRemito(hojaId: string, remitoId: string, estado: string, m
       .eq('remito_id', remitoId)
       .eq('estado_entrega', estadoDB);
     
-    logger.info('[Repository] Remito actualizado. Rows affected: %d (verificado: %d)', data?.length || 0, count || 0);
+    logger.info('[Repository] Remito actualizado. Verificado: %d', count || 0);
     
     if (!count || count === 0) {
       logger.error('[Repository] NO se actualizó ningún registro. Estado: %s', estadoDB);
@@ -461,7 +461,7 @@ async actualizarEstadoRemito(hojaId: string, remitoId: string, estado: string, m
     if (cargaError) {
       logger.error('[Repository] Error actualizando remitos a En Reparto: %s', cargaError.message);
     } else {
-      logger.info('[Repository] Remitos actualizados. Rows: %d', data?.length || 0);
+      logger.info('[Repository] Remitos actualizados a En Reparto');
     }
     
     // Verificar después
@@ -630,12 +630,12 @@ return result;
     })) || [];
   }
 
-  private mapEstadoEntrega(estado: string): 'En Base' | 'En Reparto' | 'Entregado' | 'Rechazado' {
+  private mapEstadoEntrega(estado: string): 'En Base' | 'En reparto' | 'Entregado' | 'Rechazado' {
     const estadoLower = estado?.toLowerCase();
     switch (estadoLower) {
       case 'entregado': return 'Entregado';
       case 'rechazado': return 'Rechazado';
-      case 'en reparto': return 'En Reparto';  // DB puede tener 'En Reparto' o 'En reparto'
+      case 'en reparto': return 'En reparto';  // DB puede tener 'En Reparto' o 'En reparto'
       case 'pendiente':
       default: return 'En Base';
     }
